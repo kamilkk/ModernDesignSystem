@@ -32,9 +32,7 @@ let package = Package(
             targets: ["ModernDesignSystem"]
         )
     ],
-    dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.17.6")
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "ModernDesignSystem",
@@ -58,10 +56,7 @@ let package = Package(
         ),
         .testTarget(
             name: "ModernDesignSystemTests",
-            dependencies: [
-                "ModernDesignSystem",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
-            ]
+            dependencies: ["ModernDesignSystem"]
         )
     ]
 )

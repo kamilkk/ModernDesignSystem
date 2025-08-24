@@ -20,6 +20,9 @@ import Combine
 import SwiftUI
 
 public final class ModernDesignSystem: ObservableObject {
+    /// The version of ModernDesignSystem
+    public static let version = "1.0.1"
+    
     @AppStorage("useSystemTheme") public var useSystemTheme = true {
         didSet { objectWillChange.send() }
     }

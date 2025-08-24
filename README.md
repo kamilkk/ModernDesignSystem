@@ -175,6 +175,45 @@ cd Example
 open ModernDesignSystemExample.xcodeproj
 ```
 
+## Testing
+
+ModernDesignSystem includes comprehensive unit tests covering all core functionality. There are multiple ways to run the tests:
+
+### Option 1: Open Package Directly in Xcode
+
+1. Open the package directly by opening `Package.swift` in Xcode
+2. Select the `ModernDesignSystem` scheme from the scheme selector
+3. Run tests with `⌘+U` (Test)
+
+This approach gives you full IDE integration with test results, coverage, and debugging capabilities.
+
+### Option 2: Command Line Testing
+
+```bash
+# Navigate to the package directory
+cd /path/to/ModernDesignSystem
+
+# Run all tests
+swift test
+
+# Run tests with verbose output
+swift test --verbose
+```
+
+The command line approach is perfect for CI/CD pipelines and quick verification during development.
+
+### Test Coverage
+
+The test suite includes:
+- **26 comprehensive tests** covering all major components
+- **ModernDesignSystem core functionality** (13 tests)
+- **ColorToken system** (6 tests) 
+- **Theme management** (7 tests)
+- **Edge cases and error conditions**
+- **Cross-platform compatibility verification**
+
+All tests are designed to run on both iOS and macOS targets.
+
 ## Architecture
 
 ### Design Tokens
