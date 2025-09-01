@@ -238,6 +238,7 @@ struct ComponentsView: View {
             LazyVStack(spacing: 32) {
                 ButtonsDemo()
                 TextFieldsDemo()
+                LoaderDemo()
                 NotificationsDemo()
                 CardsDemo()
             }
@@ -313,6 +314,130 @@ struct TextFieldsDemo: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+struct LoaderDemo: View {
+    @State private var showOverlayLoader = false
+    @State private var showInlineLoader = false
+    @State private var showLoadingContent = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Loaders")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            VStack(spacing: 16) {
+                // Different sizes
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Sizes")
+                        .font(.headline)
+                    
+                    HStack(spacing: 20) {
+                        VStack(spacing: 8) {
+                            ModernLoader(size: .small)
+                            Text("Small")
+                                .font(.caption)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            ModernLoader(size: .medium)
+                            Text("Medium")
+                                .font(.caption)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            ModernLoader(size: .large)
+                            Text("Large")
+                                .font(.caption)
+                        }
+                    }
+                }
+                
+                Divider()
+                
+                // Different colors
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Colors")
+                        .font(.headline)
+                    
+                    HStack(spacing: 20) {
+                        VStack(spacing: 8) {
+                            ModernLoader(color: .primary)
+                            Text("Primary")
+                                .font(.caption)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            ModernLoader(color: .secondary)
+                            Text("Secondary")
+                                .font(.caption)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            ModernLoader(color: .accent)
+                            Text("Accent")
+                                .font(.caption)
+                        }
+                    }
+                }
+                
+                Divider()
+                
+                // Interactive examples
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Interactive Examples")
+                        .font(.headline)
+                    
+                    VStack(spacing: 12) {
+                        Button(showOverlayLoader ? "Hide Overlay Loader" : "Show Overlay Loader") {
+                            showOverlayLoader.toggle()
+                        }
+                        .buttonStyle(ModernButtonStyle(type: .secondary))
+                        
+                        Button(showInlineLoader ? "Hide Content Loader" : "Show Content Loader") {
+                            showInlineLoader.toggle()
+                        }
+                        .buttonStyle(ModernButtonStyle(type: .secondary))
+                        
+                        Button("Simulate Loading Content") {
+                            showLoadingContent = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                showLoadingContent = false
+                            }
+                        }
+                        .buttonStyle(ModernButtonStyle(type: .primary))
+                    }
+                    
+                    // Content with inline loader
+                    ModernCard {
+                        VStack(spacing: 12) {
+                            Text("Sample Content")
+                                .font(.headline)
+                            
+                            if showInlineLoader {
+                                VStack(spacing: 12) {
+                                    ModernLoader()
+                                    Text("Loading...")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding()
+                            } else {
+                                Text("This content can show a loader when needed. Toggle the button above to see the loader in action.")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                        }
+                    }
+                    .loader(showLoadingContent, color: .primary, size: .large)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .loader(showOverlayLoader)
     }
 }
 
