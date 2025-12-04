@@ -64,3 +64,5 @@ fastlane/test_output
 # AI Assistant Files
 CLAUDE.md
 */.DS_Store
+_dev/
+
