@@ -60,3 +60,9 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# AI Assistant Files
+CLAUDE.md
+*/.DS_Store
+_dev/
+

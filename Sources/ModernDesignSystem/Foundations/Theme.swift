@@ -19,50 +19,51 @@
 import SwiftUI
 
 public enum Theme: String, CaseIterable, Codable, Sendable {
-    case light = "light"
-    case dark = "dark"
-    
-    public var system: ColorScheme {
-        switch self {
-        case .light:
-            return .light
-        case .dark:
-            return .dark
-        }
+  case light
+  case dark
+
+  public var system: ColorScheme {
+    switch self {
+    case .light:
+      return .light
+    case .dark:
+      return .dark
     }
-    
-    public var name: String {
-        switch self {
-        case .light:
-            return "Light"
-        case .dark:
-            return "Dark"
-        }
+  }
+
+  public var name: String {
+    switch self {
+    case .light:
+      return "Light"
+    case .dark:
+      return "Dark"
     }
+  }
 }
 
 public struct SystemThemeMapping: Codable, Hashable, Sendable {
-    public let light: Theme
-    public let dark: Theme
-    
-    public init(light: Theme, dark: Theme) {
-        self.light = light
-        self.dark = dark
+  public let light: Theme
+  public let dark: Theme
+
+  public init(light: Theme, dark: Theme) {
+    self.light = light
+    self.dark = dark
+  }
+
+  public func theme(_ colorScheme: ColorScheme) -> Theme {
+    switch colorScheme {
+    case .light:
+      return light
+    case .dark:
+      return dark
+    @unknown default:
+      return light
     }
-    
-    public func theme(_ colorScheme: ColorScheme) -> Theme {
-        switch colorScheme {
-        case .light:
-            return light
-        case .dark:
-            return dark
-        @unknown default:
-            return light
-        }
-    }
+  }
 }
 
 // MARK: - Default mappings
+
 public extension SystemThemeMapping {
-    static let `default` = SystemThemeMapping(light: .light, dark: .dark)
+  static let `default` = SystemThemeMapping(light: .light, dark: .dark)
 }

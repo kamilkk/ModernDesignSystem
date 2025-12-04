@@ -19,47 +19,43 @@
 import SwiftUI
 
 public struct AssetResource: Hashable {
-    public let name: String
-    public let bundle: Bundle
-    
-    public init(name: String, bundle: Bundle) {
-        self.name = name
-        self.bundle = bundle
-    }
+  public let name: String
+  public let bundle: Bundle
+
+  public init(name: String, bundle: Bundle) {
+    self.name = name
+    self.bundle = bundle
+  }
 }
 
 public struct AllAssets {
-
-
-    public init() {}
+  public init() {}
 }
 
-public extension AssetResource {
-
-}
+public extension AssetResource {}
 
 public extension Image {
-    init(asset: AssetResource) {
-        self.init(asset.name, bundle: asset.bundle)
-    }
+  init(asset: AssetResource) {
+    self.init(asset.name, bundle: asset.bundle)
+  }
 }
 
 #if canImport(UIKit)
-import UIKit
+  import UIKit
 
-public extension UIImage {
+  public extension UIImage {
     convenience init?(asset: AssetResource, compatibleWith traitCollection: UITraitCollection? = nil) {
-        self.init(named: asset.name, in: asset.bundle, compatibleWith: traitCollection)
+      self.init(named: asset.name, in: asset.bundle, compatibleWith: traitCollection)
     }
-}
+  }
 #endif
 
 #if canImport(AppKit)
-import AppKit
+  import AppKit
 
-public extension NSImage {
+  public extension NSImage {
     convenience init?(asset: AssetResource) {
-        self.init(named: asset.name)
+      self.init(named: asset.name)
     }
-}
+  }
 #endif

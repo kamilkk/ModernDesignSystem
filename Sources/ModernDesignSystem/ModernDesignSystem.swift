@@ -20,95 +20,98 @@ import Combine
 import SwiftUI
 
 public final class ModernDesignSystem: ObservableObject {
-    /// The version of ModernDesignSystem
-    public static let version = "1.0.1"
-    
-    @AppStorage("useSystemTheme") public var useSystemTheme = true {
-        didSet { objectWillChange.send() }
+  /// The version of ModernDesignSystem
+  public static let version = "1.0.1"
+
+  @AppStorage("useSystemTheme") public var useSystemTheme = true {
+    didSet { objectWillChange.send() }
+  }
+
+  @AppStorage("currentTheme") public var theme: Theme = .light {
+    didSet { objectWillChange.send() }
+  }
+
+  @AppStorage("selectedColorSet") public var selectedColorSet: ColorSetName = .modernBlue {
+    didSet { objectWillChange.send() }
+  }
+
+  @Published public var designFoundations: DesignFoundations
+  @Published public var brand: Brand
+  @Published public var brands: [Brand]
+
+  private var cancellables: [AnyCancellable] = []
+
+  public init(brands: [Brand], designFoundations: DesignFoundations) {
+    precondition(!brands.isEmpty, "Brands cannot be empty")
+    self.designFoundations = designFoundations
+    self.brands = brands
+    brand = brands[0]
+    if !brand.themes.contains(theme) {
+      precondition(!brand.themes.isEmpty, "Themes cannot be empty")
+      theme = brand.themes[0]
     }
-    @AppStorage("currentTheme") public var theme: Theme = .light {
-        didSet { objectWillChange.send() }
+  }
+
+  public convenience init(brand: Brand, designFoundations: DesignFoundations = .modern) {
+    self.init(brands: [brand], designFoundations: designFoundations)
+  }
+
+  public func updateFoundations(_ designFoundations: DesignFoundations) {
+    self.designFoundations = designFoundations
+  }
+
+  public func currentTheme(with systemScheme: ColorScheme, forceSystem: Bool = false) -> Theme {
+    if forceSystem || useSystemTheme {
+      brand.systemThemeMapping.theme(systemScheme)
+    } else {
+      theme
     }
-    @AppStorage("selectedColorSet") public var selectedColorSet: ColorSetName = .modernBlue {
-        didSet { objectWillChange.send() }
+  }
+
+  public func currentScheme(with systemScheme: ColorScheme, forceSystem: Bool = false) -> ColorScheme {
+    if forceSystem || useSystemTheme {
+      systemScheme
+    } else {
+      theme.system
     }
-    
-    @Published public var designFoundations: DesignFoundations
-    @Published public var brand: Brand
-    @Published public var brands: [Brand]
-    
-    private var cancellables: [AnyCancellable] = []
-    
-    public init(brands: [Brand], designFoundations: DesignFoundations) {
-        precondition(!brands.isEmpty, "Brands cannot be empty")
-        self.designFoundations = designFoundations
-        self.brands = brands
-        self.brand = brands[0]
-        if !brand.themes.contains(theme) {
-            precondition(!brand.themes.isEmpty, "Themes cannot be empty")
-            self.theme = brand.themes[0]
-        }
-    }
-    
-    public convenience init(brand: Brand, designFoundations: DesignFoundations = .modern) {
-        self.init(brands: [brand], designFoundations: designFoundations)
-    }
-    
-    public func updateFoundations(_ designFoundations: DesignFoundations) {
-        self.designFoundations = designFoundations
-    }
-    
-    public func currentTheme(with systemScheme: ColorScheme, forceSystem: Bool = false) -> Theme {
-        if forceSystem || useSystemTheme {
-            brand.systemThemeMapping.theme(systemScheme)
-        } else {
-            theme
-        }
-    }
-    
-    public func currentScheme(with systemScheme: ColorScheme, forceSystem: Bool = false) -> ColorScheme {
-        if forceSystem || useSystemTheme {
-            systemScheme
-        } else {
-            theme.system
-        }
-    }
-    
-    public func color(_ path: ColorPath?, systemScheme: ColorScheme, forceSystem: Bool = false) -> Color {
-        guard let path else { return .white.opacity(0.0000001) }
-        
-        let semanticColorToken = brand.semanticColors[keyPath: path]
-        let globalColorPath = semanticColorToken[currentTheme(with: systemScheme, forceSystem: forceSystem)]
-        return designFoundations.globalColors[keyPath: globalColorPath].color
-    }
-    
-    public func colorToken(_ path: ColorPath?, systemScheme: ColorScheme, forceSystem: Bool = false) -> ColorToken {
-        guard let path else { return .init(red: 0, green: 0, blue: 0, opacity: 0.0000001) }
-        
-        let semanticColorToken = brand.semanticColors[keyPath: path]
-        let globalColorPath = semanticColorToken[currentTheme(with: systemScheme, forceSystem: forceSystem)]
-        return designFoundations.globalColors[keyPath: globalColorPath]
-    }
-    
-    public func font(_ path: FontPath,
-                     verticalSizeClass: UserInterfaceSizeClass?,
-                     horizontalSizeClass: UserInterfaceSizeClass?) -> Font {
-        brand.typography[keyPath: path].font(verticalSizeClass: verticalSizeClass, horizontalSizeClass: horizontalSizeClass)
-    }
-    
-    // Color set management inspired by IceCubesApp
-    public var currentColorSet: ColorSet {
-        availableColorSets.first { $0.name == selectedColorSet } ?? modernBlueColorSet
-    }
-    
-    public func applyColorSet(_ colorSet: ColorSet) {
-        selectedColorSet = colorSet.name
-        objectWillChange.send()
-    }
+  }
+
+  public func color(_ path: ColorPath?, systemScheme: ColorScheme, forceSystem: Bool = false) -> Color {
+    guard let path else { return .white.opacity(0.0000001) }
+
+    let semanticColorToken = brand.semanticColors[keyPath: path]
+    let globalColorPath = semanticColorToken[currentTheme(with: systemScheme, forceSystem: forceSystem)]
+    return designFoundations.globalColors[keyPath: globalColorPath].color
+  }
+
+  public func colorToken(_ path: ColorPath?, systemScheme: ColorScheme, forceSystem: Bool = false) -> ColorToken {
+    guard let path else { return .init(red: 0, green: 0, blue: 0, opacity: 0.0000001) }
+
+    let semanticColorToken = brand.semanticColors[keyPath: path]
+    let globalColorPath = semanticColorToken[currentTheme(with: systemScheme, forceSystem: forceSystem)]
+    return designFoundations.globalColors[keyPath: globalColorPath]
+  }
+
+  public func font(_ path: FontPath,
+                   verticalSizeClass: UserInterfaceSizeClass?,
+                   horizontalSizeClass: UserInterfaceSizeClass?) -> Font {
+    brand.typography[keyPath: path].font(verticalSizeClass: verticalSizeClass, horizontalSizeClass: horizontalSizeClass)
+  }
+
+  // Color set management inspired by IceCubesApp
+  public var currentColorSet: ColorSet {
+    availableColorSets.first { $0.name == selectedColorSet } ?? modernBlueColorSet
+  }
+
+  public func applyColorSet(_ colorSet: ColorSet) {
+    selectedColorSet = colorSet.name
+    objectWillChange.send()
+  }
 }
 
 // MARK: - Default instances
+
 public extension ModernDesignSystem {
-    @MainActor
-    static let shared = ModernDesignSystem(brand: .modern)
+  @MainActor
+  static let shared = ModernDesignSystem(brand: .modern)
 }
