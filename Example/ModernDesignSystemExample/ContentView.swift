@@ -242,6 +242,10 @@ struct ComponentsView: View {
         LoaderDemo()
         NotificationsDemo()
         CardsDemo()
+        DocumentCardsDemo()
+        FileTypeIconsDemo()
+        EmptyStatesDemo()
+        MaterialEffectsDemo()
       }
       .padding()
     }
@@ -530,6 +534,302 @@ struct CardsDemo: View {
   }
 }
 
+struct DocumentCardsDemo: View {
+  @State private var selectedStyle: DocumentCard.Style = .hero
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Document Cards")
+        .font(.title2)
+        .fontWeight(.semibold)
+
+      // Style picker
+      Picker("Style", selection: $selectedStyle) {
+        Text("Hero").tag(DocumentCard.Style.hero)
+        Text("Compact").tag(DocumentCard.Style.compact)
+        Text("List").tag(DocumentCard.Style.list)
+      }
+      .pickerStyle(.segmented)
+      .padding(.bottom, 8)
+
+      // Style-specific layout
+      Group {
+        switch selectedStyle {
+        case .hero:
+          VStack(spacing: 16) {
+            DocumentCard(
+              title: "Project Proposal 2025.pdf",
+              subtitle: "Important project documentation",
+              fileType: .pdf,
+              metadata: "Modified 2 hours ago • 2.5 MB",
+              isFavorite: true,
+              style: .hero
+            )
+
+            DocumentCard(
+              title: "Annual Budget.xlsx",
+              subtitle: "Financial planning spreadsheet",
+              fileType: .excel,
+              metadata: "Today at 10:30 AM • 4.1 MB",
+              style: .hero
+            )
+          }
+
+        case .compact:
+          LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
+            DocumentCard(
+              title: "Budget.xlsx",
+              fileType: .excel,
+              metadata: "12.3 MB",
+              style: .compact
+            )
+
+            DocumentCard(
+              title: "Presentation.pptx",
+              fileType: .powerpoint,
+              metadata: "8.1 MB",
+              isFavorite: true,
+              style: .compact
+            )
+
+            DocumentCard(
+              title: "Report.pdf",
+              fileType: .pdf,
+              metadata: "2.5 MB",
+              style: .compact
+            )
+
+            DocumentCard(
+              title: "Photo.jpg",
+              fileType: .image,
+              metadata: "1.8 MB",
+              isFavorite: true,
+              style: .compact
+            )
+          }
+
+        case .list:
+          VStack(spacing: 8) {
+            DocumentCard(
+              title: "Meeting Notes.pages",
+              subtitle: "Team sync notes",
+              fileType: .pages,
+              metadata: "Today at 3:42 PM",
+              style: .list
+            )
+
+            DocumentCard(
+              title: "Financial Report.numbers",
+              subtitle: "Q4 2025",
+              fileType: .numbers,
+              metadata: "Yesterday",
+              isFavorite: true,
+              style: .list
+            )
+
+            DocumentCard(
+              title: "Slides.keynote",
+              subtitle: "Company presentation",
+              fileType: .keynote,
+              metadata: "Dec 1",
+              style: .list
+            )
+
+            DocumentCard(
+              title: "Contract.pdf",
+              subtitle: "Legal document",
+              fileType: .pdf,
+              metadata: "Nov 28",
+              style: .list
+            )
+          }
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+struct FileTypeIconsDemo: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+  @State private var iconSize: CGFloat = 44
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("File Type Icons")
+        .font(.title2)
+        .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
+
+      VStack(spacing: 12) {
+        HStack {
+          Text("Icon Size: \(Int(iconSize))pt")
+            .font(.caption)
+            .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
+
+          Spacer()
+        }
+
+        Slider(value: $iconSize, in: 24 ... 80, step: 4)
+          .padding(.bottom, 8)
+      }
+
+      LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 16) {
+        ForEach(FileTypeIcon.FileType.allCases, id: \.self) { type in
+          VStack(spacing: 8) {
+            FileTypeIcon(fileType: type, size: iconSize)
+
+            Text(type.rawValue.capitalized)
+              .font(.caption)
+              .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
+          }
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+struct EmptyStatesDemo: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+  @State private var selectedPreset: EmptyStatePreset = .noDocuments
+
+  enum EmptyStatePreset: String, CaseIterable {
+    case noDocuments = "No Documents"
+    case noSearchResults = "No Search Results"
+    case noFavorites = "No Favorites"
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Empty States")
+        .font(.title2)
+        .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
+
+      Picker("Preset", selection: $selectedPreset) {
+        ForEach(EmptyStatePreset.allCases, id: \.self) { preset in
+          Text(preset.rawValue).tag(preset)
+        }
+      }
+      .pickerStyle(.segmented)
+
+      ModernCard {
+        Group {
+          switch selectedPreset {
+          case .noDocuments:
+            EmptyStateView.noDocuments {
+              print("Open documents tapped")
+            }
+            .frame(height: 300)
+
+          case .noSearchResults:
+            EmptyStateView.noSearchResults(query: "budget 2025")
+              .frame(height: 300)
+
+          case .noFavorites:
+            EmptyStateView.noFavorites {
+              print("Browse documents tapped")
+            }
+            .frame(height: 300)
+          }
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+struct MaterialEffectsDemo: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+  @State private var selectedMaterial: MaterialStyle = .glass
+  @State private var vibrancyIntensity: Double = 1.0
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Material Effects")
+        .font(.title2)
+        .fontWeight(.semibold)
+
+      VStack(spacing: 16) {
+        Picker("Material Style", selection: $selectedMaterial) {
+          ForEach(MaterialStyle.allCases, id: \.self) { style in
+            Text(styleDisplayName(for: style)).tag(style)
+          }
+        }
+        .pickerStyle(.segmented)
+
+        VStack(alignment: .leading, spacing: 8) {
+          HStack {
+            Text("Vibrancy Intensity: \(Int(vibrancyIntensity * 100))%")
+              .font(.caption)
+              .foregroundColor(.secondary)
+
+            Spacer()
+          }
+
+          Slider(value: $vibrancyIntensity, in: 0 ... 1, step: 0.1)
+        }
+
+        // Material effect preview
+        ZStack {
+          // Background gradient
+          LinearGradient(
+            gradient: Gradient(colors: [
+              designSystem.color(\.primary, systemScheme: colorScheme),
+              designSystem.color(\.secondary, systemScheme: colorScheme),
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+          )
+          .frame(height: 200)
+          .clipShape(RoundedRectangle(cornerRadius: 12))
+
+          // Material overlay with content
+          VStack(spacing: 12) {
+            Image(systemName: "sparkles")
+              .font(.system(size: 40))
+              .vibrancy(intensity: vibrancyIntensity)
+
+            Text("Material Effect")
+              .font(designSystem.brand.typography.titleLarge.font(
+                verticalSizeClass: nil,
+                horizontalSizeClass: nil
+              ))
+              .vibrancy(intensity: vibrancyIntensity)
+
+            Text("This content sits on a material background")
+              .font(designSystem.brand.typography.bodyMedium.font(
+                verticalSizeClass: nil,
+                horizontalSizeClass: nil
+              ))
+              .multilineTextAlignment(.center)
+              .vibrancy(intensity: vibrancyIntensity)
+          }
+          .padding()
+          .frame(maxWidth: .infinity)
+          .materialStyle(selectedMaterial)
+          .clipShape(RoundedRectangle(cornerRadius: 12))
+          .padding()
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func styleDisplayName(for style: MaterialStyle) -> String {
+    switch style {
+    case .glass: return "Glass"
+    case .frosted: return "Frosted"
+    case .subtle: return "Subtle"
+    case .prominent: return "Prominent"
+    }
+  }
+}
+
 struct ColorsView: View {
   @EnvironmentObject var designSystem: ModernDesignSystem
   @Environment(\.colorScheme) var colorScheme
@@ -539,6 +839,8 @@ struct ColorsView: View {
       LazyVStack(spacing: 24) {
         colorSetsSection
         semanticColorsSection
+        documentStateColorsSection
+        fileTypeColorsSection
       }
       .padding()
     }
@@ -577,6 +879,93 @@ struct ColorsView: View {
         ColorSwatch(name: "Error", color: designSystem.color(\.error, systemScheme: colorScheme))
         ColorSwatch(name: "Primary Background", color: designSystem.color(\.primaryBackground, systemScheme: colorScheme))
         ColorSwatch(name: "Secondary Background", color: designSystem.color(\.secondaryBackground, systemScheme: colorScheme))
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var documentStateColorsSection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Document State Colors")
+        .font(.title2)
+        .fontWeight(.semibold)
+
+      LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+        ColorSwatch(name: "Document New", color: resolveDocumentColor(SemanticColors.documentNew))
+        ColorSwatch(name: "Document Modified", color: resolveDocumentColor(SemanticColors.documentModified))
+        ColorSwatch(name: "Document Synced", color: resolveDocumentColor(SemanticColors.documentSynced))
+        ColorSwatch(name: "Document Error", color: resolveDocumentColor(SemanticColors.documentError))
+      }
+    }
+  }
+
+  private func resolveDocumentColor(_ token: SemanticColorToken) -> Color {
+    let theme = designSystem.currentTheme(with: colorScheme)
+    let globalColorPath = token[theme]
+    return designSystem.designFoundations.globalColors[keyPath: globalColorPath].color
+  }
+
+  @ViewBuilder
+  private var fileTypeColorsSection: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("File Type Colors")
+        .font(.title2)
+        .fontWeight(.semibold)
+
+      LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 16) {
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .pdf, size: 48)
+          Text("PDF")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .word, size: 48)
+          Text("Word")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .excel, size: 48)
+          Text("Excel")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .powerpoint, size: 48)
+          Text("PowerPoint")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .pages, size: 48)
+          Text("Pages")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .numbers, size: 48)
+          Text("Numbers")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .keynote, size: 48)
+          Text("Keynote")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .image, size: 48)
+          Text("Image")
+            .font(.caption)
+        }
+
+        VStack(spacing: 8) {
+          FileTypeIcon(fileType: .unknown, size: 48)
+          Text("Unknown")
+            .font(.caption)
+        }
       }
     }
   }
@@ -636,6 +1025,7 @@ struct ColorSwatch: View {
 
 struct TypographyView: View {
   @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     ScrollView {
@@ -680,6 +1070,7 @@ struct TypographyView: View {
       Text(title)
         .font(.title2)
         .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
       VStack(alignment: .leading, spacing: 12) {
         ForEach(tokens.indices, id: \.self) { index in
@@ -687,10 +1078,11 @@ struct TypographyView: View {
           VStack(alignment: .leading, spacing: 4) {
             Text(name)
               .font(token.font(verticalSizeClass: nil, horizontalSizeClass: nil))
+              .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
             Text("Size: \(Int(token.size))pt, Weight: \(token.weight.rawValue)")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
           }
         }
       }
@@ -701,6 +1093,7 @@ struct TypographyView: View {
 
 struct SpacingView: View {
   @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
     ScrollView {
@@ -708,6 +1101,7 @@ struct SpacingView: View {
         Text("Spacing Scale")
           .font(.title2)
           .fontWeight(.semibold)
+          .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
         VStack(alignment: .leading, spacing: 16) {
           spacingExample("XS", value: designSystem.brand.spacing.xs)
@@ -729,16 +1123,17 @@ struct SpacingView: View {
       HStack {
         Text(name)
           .font(.headline)
+          .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
         Spacer()
 
         Text("\(Int(value))pt")
           .font(.caption)
-          .foregroundColor(.secondary)
+          .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
       }
 
       Rectangle()
-        .fill(Color.blue)
+        .fill(designSystem.color(\.primary, systemScheme: colorScheme))
         .frame(width: value * 4, height: 20)
     }
   }
@@ -751,6 +1146,7 @@ struct ExamplesView: View {
         LoginFormExample()
         ProfileCardExample()
         DashboardExample()
+        DocumentBrowserExample()
       }
       .padding()
     }
@@ -758,6 +1154,8 @@ struct ExamplesView: View {
 }
 
 struct LoginFormExample: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
   @State private var email = ""
   @State private var password = ""
 
@@ -766,12 +1164,14 @@ struct LoginFormExample: View {
       Text("Login Form Example")
         .font(.title2)
         .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
       ModernCard {
         VStack(spacing: 20) {
           Text("Welcome Back")
             .font(.title)
             .fontWeight(.semibold)
+            .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
           VStack(spacing: 16) {
             ModernTextField("Email", text: $email, placeholder: "Enter your email", type: .email)
@@ -792,16 +1192,20 @@ struct LoginFormExample: View {
 }
 
 struct ProfileCardExample: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("Profile Card Example")
         .font(.title2)
         .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
       ModernCard {
         HStack(spacing: 16) {
           Circle()
-            .fill(.blue.gradient)
+            .fill(designSystem.color(\.primary, systemScheme: colorScheme).gradient)
             .frame(width: 60, height: 60)
             .overlay(
               Text("JD")
@@ -813,14 +1217,15 @@ struct ProfileCardExample: View {
           VStack(alignment: .leading, spacing: 4) {
             Text("John Doe")
               .font(.headline)
+              .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
             Text("iOS Developer")
               .font(.subheadline)
-              .foregroundColor(.secondary)
+              .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
 
             Text("San Francisco, CA")
               .font(.caption)
-              .foregroundColor(.secondary)
+              .foregroundColor(designSystem.color(\.tertiaryText, systemScheme: colorScheme))
           }
 
           Spacer()
@@ -835,11 +1240,15 @@ struct ProfileCardExample: View {
 }
 
 struct DashboardExample: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       Text("Dashboard Example")
         .font(.title2)
         .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
       LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
         StatCard(title: "Total Users", value: "1,234", change: "+12%", isPositive: true)
@@ -853,6 +1262,8 @@ struct DashboardExample: View {
 }
 
 struct StatCard: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
   let title: String
   let value: String
   let change: String
@@ -863,19 +1274,189 @@ struct StatCard: View {
       VStack(alignment: .leading, spacing: 8) {
         Text(title)
           .font(.caption)
-          .foregroundColor(.secondary)
+          .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
 
         Text(value)
           .font(.title2)
           .fontWeight(.semibold)
+          .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
 
         Text(change)
           .font(.caption)
-          .foregroundColor(isPositive ? .green : .red)
+          .foregroundColor(isPositive ? designSystem.color(\.success, systemScheme: colorScheme) : designSystem.color(\.error, systemScheme: colorScheme))
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
   }
+}
+
+struct DocumentBrowserExample: View {
+  @EnvironmentObject var designSystem: ModernDesignSystem
+  @Environment(\.colorScheme) var colorScheme
+  @State private var searchText = ""
+  @State private var viewMode: ViewMode = .grid
+  @State private var showFavoritesOnly = false
+
+  enum ViewMode {
+    case grid, list
+  }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text("Document Browser Example")
+        .font(.title2)
+        .fontWeight(.semibold)
+        .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
+
+      ModernCard {
+        VStack(spacing: 16) {
+          // Search and controls
+          HStack(spacing: 12) {
+            ModernTextField("Search", text: $searchText, placeholder: "Search documents...")
+
+            Button(action: { showFavoritesOnly.toggle() }) {
+              Image(systemName: showFavoritesOnly ? "star.fill" : "star")
+            }
+            .buttonStyle(ModernButtonStyle(type: .secondary, size: .medium))
+
+            Button(action: { viewMode = viewMode == .grid ? .list : .grid }) {
+              Image(systemName: viewMode == .grid ? "list.bullet" : "square.grid.2x2")
+            }
+            .buttonStyle(ModernButtonStyle(type: .secondary, size: .medium))
+          }
+
+          Divider()
+
+          // Document list
+          if filteredDocuments.isEmpty {
+            if searchText.isEmpty {
+              if showFavoritesOnly {
+                EmptyStateView.noFavorites {
+                  showFavoritesOnly = false
+                }
+                .frame(height: 250)
+              } else {
+                EmptyStateView.noDocuments {
+                  print("Open documents")
+                }
+                .frame(height: 250)
+              }
+            } else {
+              EmptyStateView.noSearchResults(query: searchText)
+                .frame(height: 250)
+            }
+          } else {
+            ScrollView {
+              Group {
+                if viewMode == .grid {
+                  LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                    ForEach(filteredDocuments) { doc in
+                      DocumentCard(
+                        title: doc.title,
+                        fileType: doc.fileType,
+                        metadata: doc.metadata,
+                        isFavorite: doc.isFavorite,
+                        style: .compact
+                      )
+                    }
+                  }
+                } else {
+                  VStack(spacing: 8) {
+                    ForEach(filteredDocuments) { doc in
+                      DocumentCard(
+                        title: doc.title,
+                        subtitle: doc.subtitle,
+                        fileType: doc.fileType,
+                        metadata: doc.metadata,
+                        isFavorite: doc.isFavorite,
+                        style: .list
+                      )
+                    }
+                  }
+                }
+              }
+              .padding(.vertical, 8)
+            }
+            .frame(height: 300)
+          }
+        }
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private var filteredDocuments: [MockDocument] {
+    mockDocuments
+      .filter { doc in
+        if showFavoritesOnly && !doc.isFavorite {
+          return false
+        }
+        if !searchText.isEmpty && !doc.title.localizedCaseInsensitiveContains(searchText) {
+          return false
+        }
+        return true
+      }
+  }
+
+  private let mockDocuments = [
+    MockDocument(
+      id: 1,
+      title: "Project Proposal.pdf",
+      subtitle: "Q4 2025 Planning",
+      fileType: .pdf,
+      metadata: "2.5 MB • Today",
+      isFavorite: true
+    ),
+    MockDocument(
+      id: 2,
+      title: "Budget.xlsx",
+      subtitle: "Financial spreadsheet",
+      fileType: .excel,
+      metadata: "1.2 MB • Yesterday",
+      isFavorite: false
+    ),
+    MockDocument(
+      id: 3,
+      title: "Presentation.pptx",
+      subtitle: "Company overview",
+      fileType: .powerpoint,
+      metadata: "8.4 MB • Dec 2",
+      isFavorite: true
+    ),
+    MockDocument(
+      id: 4,
+      title: "Notes.pages",
+      subtitle: "Meeting minutes",
+      fileType: .pages,
+      metadata: "0.5 MB • Dec 1",
+      isFavorite: false
+    ),
+    MockDocument(
+      id: 5,
+      title: "Data.numbers",
+      subtitle: "Analytics report",
+      fileType: .numbers,
+      metadata: "2.1 MB • Nov 30",
+      isFavorite: true
+    ),
+    MockDocument(
+      id: 6,
+      title: "Slides.keynote",
+      subtitle: "Product launch",
+      fileType: .keynote,
+      metadata: "12.3 MB • Nov 28",
+      isFavorite: false
+    ),
+  ]
+}
+
+struct MockDocument: Identifiable {
+  let id: Int
+  let title: String
+  let subtitle: String?
+  let fileType: FileTypeIcon.FileType
+  let metadata: String
+  let isFavorite: Bool
 }
 
 // MARK: - Previews
