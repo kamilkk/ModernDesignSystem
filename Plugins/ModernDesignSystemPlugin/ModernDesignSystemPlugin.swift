@@ -21,35 +21,35 @@ import PackagePlugin
 
 @main
 struct ModernDesignSystemPlugin: CommandPlugin {
-    func performCommand(context: PackagePlugin.PluginContext, arguments: [String]) async throws {
-        guard let target = context.package.targets.first(where: { $0.name == "ModernDesignSystem" }) as? SwiftSourceModuleTarget else {
-            Diagnostics.error("Target not found")
-            return
-        }
-        
-        guard let assets = target.sourceFiles(withSuffix: "xcassets").first else {
-            Diagnostics.error("Assets not found")
-            return
-        }
-        
-        let outputPath = target.directoryURL.appending(component: "Assets.swift")
-        
-        guard let tool = try? context.tool(named: "MapAssets") else { return }
-        let toolURL = tool.url
-        
-        let process = Process()
-        process.executableURL = toolURL
-        process.arguments = [assets.url.path(), outputPath.path()]
-        process.environment = nil
-        
-        try process.run()
-        process.waitUntilExit()
-
-        if process.terminationReason == .exit, process.terminationStatus == 0 {
-            print("Successfully created Assets.swift file.")
-        } else {
-            let problem = "\(process.terminationReason):\(process.terminationStatus)"
-            Diagnostics.error("MapAssets invocation failed: \(problem)")
-        }
+  func performCommand(context: PackagePlugin.PluginContext, arguments _: [String]) async throws {
+    guard let target = context.package.targets.first(where: { $0.name == "ModernDesignSystem" }) as? SwiftSourceModuleTarget else {
+      Diagnostics.error("Target not found")
+      return
     }
+
+    guard let assets = target.sourceFiles(withSuffix: "xcassets").first else {
+      Diagnostics.error("Assets not found")
+      return
+    }
+
+    let outputPath = target.directoryURL.appending(component: "Assets.swift")
+
+    guard let tool = try? context.tool(named: "MapAssets") else { return }
+    let toolURL = tool.url
+
+    let process = Process()
+    process.executableURL = toolURL
+    process.arguments = [assets.url.path(), outputPath.path()]
+    process.environment = nil
+
+    try process.run()
+    process.waitUntilExit()
+
+    if process.terminationReason == .exit, process.terminationStatus == 0 {
+      print("Successfully created Assets.swift file.")
+    } else {
+      let problem = "\(process.terminationReason):\(process.terminationStatus)"
+      Diagnostics.error("MapAssets invocation failed: \(problem)")
+    }
+  }
 }

@@ -19,34 +19,35 @@
 import SwiftUI
 
 public struct Spacing: Codable, Hashable, Sendable {
-    public let xs: CGFloat
-    public let sm: CGFloat
-    public let md: CGFloat
-    public let lg: CGFloat
-    public let xl: CGFloat
-    public let xxl: CGFloat
-    public let xxxl: CGFloat
-    
-    public init(xs: CGFloat, sm: CGFloat, md: CGFloat, lg: CGFloat, xl: CGFloat, xxl: CGFloat, xxxl: CGFloat) {
-        self.xs = xs
-        self.sm = sm
-        self.md = md
-        self.lg = lg
-        self.xl = xl
-        self.xxl = xxl
-        self.xxxl = xxxl
-    }
+  public let xs: CGFloat
+  public let sm: CGFloat
+  public let md: CGFloat
+  public let lg: CGFloat
+  public let xl: CGFloat
+  public let xxl: CGFloat
+  public let xxxl: CGFloat
+
+  public init(xs: CGFloat, sm: CGFloat, md: CGFloat, lg: CGFloat, xl: CGFloat, xxl: CGFloat, xxxl: CGFloat) {
+    self.xs = xs
+    self.sm = sm
+    self.md = md
+    self.lg = lg
+    self.xl = xl
+    self.xxl = xxl
+    self.xxxl = xxxl
+  }
 }
 
 // MARK: - Default Spacing
+
 public extension Spacing {
-    static let modern = Spacing(
-        xs: 4,
-        sm: 8,
-        md: 16,
-        lg: 24,
-        xl: 32,
-        xxl: 48,
-        xxxl: 64
-    )
+  static let modern = Spacing(
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+    xxl: 48,
+    xxxl: 64
+  )
 }

@@ -16,21 +16,21 @@
 //  MIT License for more details.
 //
 
-import SwiftUI
 import ModernDesignSystem
+import SwiftUI
 
 @main
 struct ModernDesignSystemExampleApp: App {
-    @MainActor @StateObject private var designSystem = ModernDesignSystem.shared
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(designSystem)
-        }
-        #if os(macOS)
-        .windowStyle(.hiddenTitleBar)
-        .windowToolbarStyle(.unified)
-        #endif
+  @MainActor @StateObject private var designSystem = ModernDesignSystem.shared
+
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
+        .environmentObject(designSystem)
     }
+    #if os(macOS)
+    .windowStyle(.hiddenTitleBar)
+    .windowToolbarStyle(.unified)
+    #endif
+  }
 }
