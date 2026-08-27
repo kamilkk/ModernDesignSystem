@@ -19,27 +19,26 @@
 import Combine
 import SwiftUI
 
+@MainActor
 public final class ModernDesignSystem: ObservableObject {
   /// The version of ModernDesignSystem
-  public static let version = "1.0.1"
+  nonisolated public static let version = "1.2.0"
 
   @AppStorage("useSystemTheme") public var useSystemTheme = true {
-    didSet { objectWillChange.send() }
+    willSet { objectWillChange.send() }
   }
 
   @AppStorage("currentTheme") public var theme: Theme = .light {
-    didSet { objectWillChange.send() }
+    willSet { objectWillChange.send() }
   }
 
   @AppStorage("selectedColorSet") public var selectedColorSet: ColorSetName = .modernBlue {
-    didSet { objectWillChange.send() }
+    willSet { objectWillChange.send() }
   }
 
   @Published public var designFoundations: DesignFoundations
   @Published public var brand: Brand
   @Published public var brands: [Brand]
-
-  private var cancellables: [AnyCancellable] = []
 
   public init(brands: [Brand], designFoundations: DesignFoundations) {
     precondition(!brands.isEmpty, "Brands cannot be empty")
@@ -77,7 +76,7 @@ public final class ModernDesignSystem: ObservableObject {
   }
 
   public func color(_ path: ColorPath?, systemScheme: ColorScheme, forceSystem: Bool = false) -> Color {
-    guard let path else { return .white.opacity(0.0000001) }
+    guard let path else { return .clear }
 
     let semanticColorToken = brand.semanticColors[keyPath: path]
     let globalColorPath = semanticColorToken[currentTheme(with: systemScheme, forceSystem: forceSystem)]

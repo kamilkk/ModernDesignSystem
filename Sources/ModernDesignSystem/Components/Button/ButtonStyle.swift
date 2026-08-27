@@ -26,51 +26,49 @@ public struct ModernButtonStyle: ButtonStyle {
 
   let type: ButtonType
   let size: ButtonSize
-  let iconPosition: IconPosition
   let maxWidth: CGFloat?
 
   public init(
     type: ButtonType = .primary,
     size: ButtonSize = .medium,
-    iconPosition: IconPosition = .leading,
     maxWidth: CGFloat? = nil
   ) {
     self.type = type
     self.size = size
-    self.iconPosition = iconPosition
     self.maxWidth = maxWidth
   }
 
   public func makeBody(configuration: Configuration) -> some View {
+    let colorSet = designSystem.currentColorSet
     let view = baseLabel(configuration: configuration)
 
     Group {
       if configuration.isPressed {
         view
-          .foregroundStyle(type.tintPressed(for: designSystem.currentColorSet))
-          .background(type.backgroundPressed(for: designSystem.currentColorSet))
+          .foregroundStyle(type.tintPressed(for: colorSet))
+          .background(type.backgroundPressed(for: colorSet))
           .clipShape(Capsule())
           .overlay(
             Capsule()
-              .stroke(type.borderPressed(for: designSystem.currentColorSet), lineWidth: 1)
+              .stroke(type.borderPressed(for: colorSet), lineWidth: 1)
           )
       } else if !isEnabled {
         view
-          .foregroundStyle(type.tintDisabled(for: designSystem.currentColorSet))
-          .background(type.backgroundDisabled(for: designSystem.currentColorSet))
+          .foregroundStyle(type.tintDisabled(for: colorSet))
+          .background(type.backgroundDisabled(for: colorSet))
           .clipShape(Capsule())
           .overlay(
             Capsule()
-              .stroke(type.borderDisabled(for: designSystem.currentColorSet), lineWidth: 1)
+              .stroke(type.borderDisabled(for: colorSet), lineWidth: 1)
           )
       } else {
         view
-          .foregroundStyle(type.tint(for: designSystem.currentColorSet))
-          .background(type.background(for: designSystem.currentColorSet))
+          .foregroundStyle(type.tint(for: colorSet))
+          .background(type.background(for: colorSet))
           .clipShape(Capsule())
           .overlay(
             Capsule()
-              .stroke(type.border(for: designSystem.currentColorSet), lineWidth: 1)
+              .stroke(type.border(for: colorSet), lineWidth: 1)
           )
       }
     }
@@ -80,19 +78,9 @@ public struct ModernButtonStyle: ButtonStyle {
   @ViewBuilder
   private func baseLabel(configuration: Configuration) -> some View {
     HStack(spacing: designSystem.brand.spacing.sm) {
-      if iconPosition == .leading, let icon = type.icon {
-        Image(systemName: icon)
-          .font(.system(size: size.iconSize))
-      }
-
       configuration.label
         .font(size.font(from: designSystem.brand.typography))
         .lineLimit(1)
-
-      if iconPosition == .trailing, let icon = type.icon {
-        Image(systemName: icon)
-          .font(.system(size: size.iconSize))
-      }
     }
     .padding(.horizontal, size.horizontalPadding)
     .padding(.vertical, size.verticalPadding)
@@ -105,13 +93,6 @@ public enum ButtonType: Sendable {
   case secondary
   case tertiary
   case destructive
-
-  var icon: String? {
-    switch self {
-    case .primary, .secondary, .tertiary, .destructive:
-      return nil
-    }
-  }
 
   func tint(for colorSet: ColorSet) -> Color {
     switch self {
@@ -216,11 +197,6 @@ public enum ButtonSize: Sendable {
       return typography.labelLarge.font(verticalSizeClass: nil, horizontalSizeClass: nil)
     }
   }
-}
-
-public enum IconPosition: Sendable {
-  case leading
-  case trailing
 }
 
 // MARK: - Environment Keys

@@ -67,3 +67,5 @@ CLAUDE.md
 _dev/
 
 Example/ModernDesignSystemExample.xcodeproj/project.pbxproj
+.vscode
+.DS_Store

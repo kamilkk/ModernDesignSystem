@@ -81,7 +81,7 @@ public struct ModernTextField: View {
         TextField(placeholder, text: text)
         #if os(iOS)
           .keyboardType(.emailAddress)
-          .autocapitalization(.none)
+          .textInputAutocapitalization(.never)
         #endif
           .textContentType(.emailAddress)
       case .password:

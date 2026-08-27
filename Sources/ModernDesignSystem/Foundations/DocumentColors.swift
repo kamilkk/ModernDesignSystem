@@ -59,31 +59,31 @@ public extension SemanticColors {
 /// Color tokens for different document file type categories
 public enum DocumentTypeColors {
   /// Color for PDF documents
-  public nonisolated(unsafe) static let pdf = SemanticColorToken(
+  public static let pdf = SemanticColorToken(
     light: \.error500,
     dark: \.error400
   )
 
   /// Color for Microsoft Office documents (Word, Excel, PowerPoint)
-  public nonisolated(unsafe) static let office = SemanticColorToken(
+  public static let office = SemanticColorToken(
     light: \.primary500,
     dark: \.primary400
   )
 
   /// Color for Apple iWork documents (Pages, Numbers, Keynote)
-  public nonisolated(unsafe) static let apple = SemanticColorToken(
+  public static let apple = SemanticColorToken(
     light: \.secondary500,
     dark: \.secondary400
   )
 
   /// Color for image files
-  public nonisolated(unsafe) static let image = SemanticColorToken(
+  public static let image = SemanticColorToken(
     light: \.success500,
     dark: \.success400
   )
 
   /// Color for unknown/generic document types
-  public nonisolated(unsafe) static let unknown = SemanticColorToken(
+  public static let unknown = SemanticColorToken(
     light: \.neutral500,
     dark: \.neutral500
   )

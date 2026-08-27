@@ -92,6 +92,7 @@ public struct ModernNotification: View {
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
         }
+        .accessibilityLabel("Dismiss")
       }
     }
     .padding(designSystem.brand.spacing.md)

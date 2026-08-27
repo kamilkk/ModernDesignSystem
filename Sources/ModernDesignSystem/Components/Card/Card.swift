@@ -119,6 +119,16 @@ public struct InfoCard: View {
   }
 
   public var body: some View {
+    if let action {
+      Button(action: action) { cardContent }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(.isButton)
+    } else {
+      cardContent
+    }
+  }
+
+  private var cardContent: some View {
     ModernCard {
       HStack(spacing: designSystem.brand.spacing.md) {
         if let image = image {
@@ -154,9 +164,6 @@ public struct InfoCard: View {
             .foregroundColor(designSystem.color(\.tertiaryText, systemScheme: colorScheme))
         }
       }
-    }
-    .onTapGesture {
-      action?()
     }
   }
 }

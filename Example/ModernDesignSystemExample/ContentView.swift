@@ -32,7 +32,7 @@ struct ContentView: View {
         // iPhone - use TabView
         TabView(selection: $selectedTab) {
           ForEach(Tab.allCases, id: \.self) { tab in
-            NavigationView {
+            NavigationStack {
               tabContentView(for: tab)
                 .navigationTitle(tab.title)
               #if os(iOS)
@@ -411,7 +411,8 @@ struct LoaderDemo: View {
 
             Button("Simulate Loading Content") {
               showLoadingContent = true
-              DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+              Task {
+                try? await Task.sleep(for: .seconds(2))
                 showLoadingContent = false
               }
             }
@@ -1355,11 +1356,13 @@ struct DocumentBrowserExample: View {
               Image(systemName: showFavoritesOnly ? "star.fill" : "star")
             }
             .buttonStyle(ModernButtonStyle(type: .secondary, size: .medium))
+            .accessibilityLabel(showFavoritesOnly ? "Show all documents" : "Show favorites only")
 
             Button(action: { viewMode = viewMode == .grid ? .list : .grid }) {
               Image(systemName: viewMode == .grid ? "list.bullet" : "square.grid.2x2")
             }
             .buttonStyle(ModernButtonStyle(type: .secondary, size: .medium))
+            .accessibilityLabel(viewMode == .grid ? "Switch to list view" : "Switch to grid view")
           }
 
           Divider()
@@ -1383,38 +1386,35 @@ struct DocumentBrowserExample: View {
                 .frame(height: 250)
             }
           } else {
-            ScrollView {
-              Group {
-                if viewMode == .grid {
-                  LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
-                    ForEach(filteredDocuments) { doc in
-                      DocumentCard(
-                        title: doc.title,
-                        fileType: doc.fileType,
-                        metadata: doc.metadata,
-                        isFavorite: doc.isFavorite,
-                        style: .compact
-                      )
-                    }
+            Group {
+              if viewMode == .grid {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 12) {
+                  ForEach(filteredDocuments) { doc in
+                    DocumentCard(
+                      title: doc.title,
+                      fileType: doc.fileType,
+                      metadata: doc.metadata,
+                      isFavorite: doc.isFavorite,
+                      style: .compact
+                    )
                   }
-                } else {
-                  VStack(spacing: 8) {
-                    ForEach(filteredDocuments) { doc in
-                      DocumentCard(
-                        title: doc.title,
-                        subtitle: doc.subtitle,
-                        fileType: doc.fileType,
-                        metadata: doc.metadata,
-                        isFavorite: doc.isFavorite,
-                        style: .list
-                      )
-                    }
+                }
+              } else {
+                VStack(spacing: 8) {
+                  ForEach(filteredDocuments) { doc in
+                    DocumentCard(
+                      title: doc.title,
+                      subtitle: doc.subtitle,
+                      fileType: doc.fileType,
+                      metadata: doc.metadata,
+                      isFavorite: doc.isFavorite,
+                      style: .list
+                    )
                   }
                 }
               }
-              .padding(.vertical, 8)
             }
-            .frame(height: 300)
+            .padding(.vertical, 8)
           }
         }
       }

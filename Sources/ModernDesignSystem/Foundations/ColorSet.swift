@@ -238,7 +238,11 @@ public let charcoalDarkColorSet = CharcoalDarkColorSet()
 // MARK: - Color Extensions
 
 public extension Color {
+  /// Creates a color from a 6-hex-digit RGB value, e.g. `Color(hex: 0xFF8800)`.
+  /// Only the low 24 bits are used; higher bits are masked off. A debug
+  /// assertion catches malformed literals (wrong digit count) at their source.
   init(hex: UInt32) {
+    assert(hex <= 0xFFFFFF, "Color(hex:) expects a 6-digit RGB value in 0x000000...0xFFFFFF, got \(String(hex, radix: 16))")
     let red = Double((hex & 0xFF0000) >> 16) / 255.0
     let green = Double((hex & 0x00FF00) >> 8) / 255.0
     let blue = Double(hex & 0x0000FF) / 255.0
