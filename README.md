@@ -175,6 +175,8 @@ cd Example
 open ModernDesignSystemExample.xcodeproj
 ```
 
+![Demo app](/img/demo_app.gif)
+
 ## Testing
 
 ModernDesignSystem includes comprehensive unit tests covering all core functionality. There are multiple ways to run the tests:

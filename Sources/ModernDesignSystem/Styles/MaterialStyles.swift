@@ -56,8 +56,12 @@ public enum MaterialStyle: CaseIterable, Sendable {
 public extension View {
   /// Applies a material style with the specified preset
   func materialStyle(_ style: MaterialStyle) -> some View {
-    background(style.material)
-      .opacity(style.opacity)
+    // Apply opacity to the material layer only, so foreground content stays opaque.
+    background(
+      Rectangle()
+        .fill(style.material)
+        .opacity(style.opacity)
+    )
   }
 }
 

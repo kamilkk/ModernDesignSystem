@@ -84,7 +84,7 @@ public struct OceanBreezeColorSet: ColorSet {
   public let labelColor: Color = .init(hex: 0x1A1A1A)
   public let secondaryLabelColor: Color = .init(hex: 0x4A4A4A)
   public let tertiaryLabelColor: Color = .init(hex: 0x7A7A7A)
-  public let quaternaryLabelColor: Color = .init(hex: 0xAAAAA)
+  public let quaternaryLabelColor: Color = .init(hex: 0xAAAAAA)
 }
 
 public struct OceanBreezeDarkColorSet: ColorSet {
@@ -105,7 +105,7 @@ public struct ForestGreenColorSet: ColorSet {
   public let name: ColorSetName = .forestGreen
   public let scheme: ColorScheme = .light
   public let tintColor: Color = .init(hex: 0x228B22)
-  public let primaryBackgroundColor: Color = .init(hex: 0xFAFFFAA)
+  public let primaryBackgroundColor: Color = .init(hex: 0xFAFFFA)
   public let secondaryBackgroundColor: Color = .init(hex: 0xF0FFF0)
   public let labelColor: Color = .init(hex: 0x1A2E1A)
   public let secondaryLabelColor: Color = .init(hex: 0x4A6A4A)
@@ -238,7 +238,11 @@ public let charcoalDarkColorSet = CharcoalDarkColorSet()
 // MARK: - Color Extensions
 
 public extension Color {
+  /// Creates a color from a 6-hex-digit RGB value, e.g. `Color(hex: 0xFF8800)`.
+  /// Only the low 24 bits are used; higher bits are masked off. A debug
+  /// assertion catches malformed literals (wrong digit count) at their source.
   init(hex: UInt32) {
+    assert(hex <= 0xFFFFFF, "Color(hex:) expects a 6-digit RGB value in 0x000000...0xFFFFFF, got \(String(hex, radix: 16))")
     let red = Double((hex & 0xFF0000) >> 16) / 255.0
     let green = Double((hex & 0x00FF00) >> 8) / 255.0
     let blue = Double(hex & 0x0000FF) / 255.0

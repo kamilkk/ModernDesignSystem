@@ -21,6 +21,7 @@ import SwiftUI
 import XCTest
 
 @available(iOS 17.0, *)
+@MainActor
 final class ModernDesignSystemTests: XCTestCase {
   func testInitWithBrand() {
     let brand = Brand.modern

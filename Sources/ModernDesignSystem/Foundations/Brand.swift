@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import SwiftUI
 
-public struct Brand: Hashable {
+public struct Brand: Hashable, Sendable {
   public let name: String
   public let themes: [Theme]
   public let systemThemeMapping: SystemThemeMapping
@@ -49,7 +50,7 @@ public struct Brand: Hashable {
 // MARK: - Default Brand
 
 public extension Brand {
-  nonisolated(unsafe) static let modern = Brand(
+  static let modern = Brand(
     name: "Modern",
     themes: [.light, .dark],
     systemThemeMapping: .default,
@@ -60,10 +61,26 @@ public extension Brand {
   )
 }
 
+public extension Brand {
+  /// A brand cloned from `.modern` with a custom display name.
+  /// The per-brand accent is applied at the SwiftUI layer with `.tint(_:)`.
+  static func make(name: String) -> Brand {
+    Brand(
+      name: name,
+      themes: Brand.modern.themes,
+      systemThemeMapping: Brand.modern.systemThemeMapping,
+      semanticColors: Brand.modern.semanticColors,
+      spacing: Brand.modern.spacing,
+      elevation: Brand.modern.elevation,
+      typography: Brand.modern.typography
+    )
+  }
+}
+
 // MARK: - Default Semantic Colors
 
 public extension SemanticColors {
-  nonisolated(unsafe) static let modern = SemanticColors(
+  static let modern = SemanticColors(
     primaryBackground: SemanticColorToken(
       light: \.neutral100,
       dark: \.neutral900

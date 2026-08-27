@@ -119,6 +119,16 @@ public struct InfoCard: View {
   }
 
   public var body: some View {
+    if let action {
+      Button(action: action) { cardContent }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(.isButton)
+    } else {
+      cardContent
+    }
+  }
+
+  private var cardContent: some View {
     ModernCard {
       HStack(spacing: designSystem.brand.spacing.md) {
         if let image = image {
@@ -155,9 +165,6 @@ public struct InfoCard: View {
         }
       }
     }
-    .onTapGesture {
-      action?()
-    }
   }
 }
 
@@ -169,6 +176,7 @@ public struct ProductCard: View {
   private let description: String?
   private let price: String?
   private let image: String?
+  private let localImage: Image?
   private let action: (() -> Void)?
 
   public init(
@@ -182,29 +190,33 @@ public struct ProductCard: View {
     self.description = description
     self.price = price
     self.image = image
+    self.localImage = nil
     self.action = action
   }
-
+  
+  public init(
+    title: String,
+    description: String? = nil,
+    price: String? = nil,
+    localImage: Image,
+    action: (() -> Void)? = nil
+  ) {
+    self.title = title
+    self.description = description
+    self.price = price
+    self.image = nil
+    self.localImage = localImage
+    self.action = action
+  }
+  
   public var body: some View {
     ModernCard {
       VStack(alignment: .leading, spacing: designSystem.brand.spacing.md) {
-        if let image = image {
-          AsyncImage(url: URL(string: image)) { image in
-            image
-              .resizable()
-              .aspectRatio(contentMode: .fill)
-          } placeholder: {
-            Rectangle()
-              .fill(designSystem.color(\.secondaryBackground, systemScheme: colorScheme))
-              .overlay(
-                Image(systemName: "photo")
-                  .foregroundColor(designSystem.color(\.tertiaryText, systemScheme: colorScheme))
-              )
-          }
+        productImage
           .frame(height: 160)
+          .frame(maxWidth: .infinity)
           .clipShape(RoundedRectangle(cornerRadius: 8))
-        }
-
+        
         VStack(alignment: .leading, spacing: designSystem.brand.spacing.xs) {
           Text(title)
             .font(designSystem.brand.typography.titleMedium.font(
@@ -212,7 +224,7 @@ public struct ProductCard: View {
               horizontalSizeClass: nil
             ))
             .foregroundColor(designSystem.color(\.primaryText, systemScheme: colorScheme))
-
+          
           if let description = description {
             Text(description)
               .font(designSystem.brand.typography.bodySmall.font(
@@ -222,7 +234,7 @@ public struct ProductCard: View {
               .foregroundColor(designSystem.color(\.secondaryText, systemScheme: colorScheme))
               .lineLimit(2)
           }
-
+          
           if let price = price {
             Text(price)
               .font(designSystem.brand.typography.titleSmall.font(
@@ -232,7 +244,7 @@ public struct ProductCard: View {
               .foregroundColor(designSystem.color(\.primary, systemScheme: colorScheme))
           }
         }
-
+        
         if action != nil {
           Button("Add to Cart") {
             action?()
@@ -241,6 +253,33 @@ public struct ProductCard: View {
         }
       }
     }
+  }
+  
+  @ViewBuilder private var productImage: some View {
+    if let localImage {
+      localImage
+        .resizable()
+        .aspectRatio(contentMode: .fill)
+    } else if let image {
+      AsyncImage(url: URL(string: image)) { img in
+        img
+          .resizable()
+          .aspectRatio(contentMode: .fill)
+      } placeholder: {
+        placeholderRect
+      }
+    } else {
+      placeholderRect
+    }
+  }
+  
+  private var placeholderRect: some View {
+    Rectangle()
+      .fill(designSystem.color(\.secondaryBackground, systemScheme: colorScheme))
+      .overlay(
+        Image(systemName: "photo")
+          .foregroundColor(designSystem.color(\.tertiaryText, systemScheme: colorScheme))
+      )
   }
 }
 

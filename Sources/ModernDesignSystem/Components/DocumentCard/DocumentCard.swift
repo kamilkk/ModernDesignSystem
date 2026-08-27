@@ -52,19 +52,19 @@ public struct DocumentCard: View {
   }
 
   public var body: some View {
-    Group {
-      switch style {
-      case .hero:
-        heroLayout
-      case .compact:
-        compactLayout
-      case .list:
-        listLayout
+    Button(action: action) {
+      Group {
+        switch style {
+        case .hero:
+          heroLayout
+        case .compact:
+          compactLayout
+        case .list:
+          listLayout
+        }
       }
     }
-    .onTapGesture {
-      action()
-    }
+    .buttonStyle(.plain)
   }
 
   // MARK: - Hero Layout (Full-width, rich metadata)

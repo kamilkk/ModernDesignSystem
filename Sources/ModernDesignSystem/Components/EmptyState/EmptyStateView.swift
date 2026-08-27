@@ -28,6 +28,10 @@ public struct EmptyStateView: View {
   private let actionTitle: String?
   private let action: (() -> Void)?
 
+  /// - Parameters:
+  ///   - image: An SF Symbol image (e.g. `Image(systemName: "tray")`). The view
+  ///     sizes it with `.font(...)`, which only scales symbol images — a raster
+  ///     or asset `Image` will not resize as expected.
   public init(
     image: Image,
     title: String,

@@ -182,7 +182,10 @@ public struct GlobalColors: Codable, Hashable, Sendable {
 public typealias ColorPath = KeyPath<SemanticColors, SemanticColorToken>
 public typealias GlobalColorPath = KeyPath<GlobalColors, ColorToken>
 
-public struct SemanticColorToken: Hashable {
+// Safe to share across actors: both stored properties are immutable key paths
+// over `GlobalColors`' `Sendable` stored properties. `KeyPath` is not
+// unconditionally `Sendable` in Swift 6, so this uses `@unchecked Sendable`.
+public struct SemanticColorToken: Hashable, @unchecked Sendable {
   public let light: GlobalColorPath
   public let dark: GlobalColorPath
 
@@ -205,7 +208,7 @@ public struct SemanticColorToken: Hashable {
   }
 }
 
-public struct SemanticColors: Hashable {
+public struct SemanticColors: Hashable, Sendable {
   // Background colors
   public let primaryBackground: SemanticColorToken
   public let secondaryBackground: SemanticColorToken
