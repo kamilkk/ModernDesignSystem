@@ -511,6 +511,21 @@ struct CardsDemo: View {
           action: {}
         )
 
+        // Local image variant: pass a SwiftUI `Image` (asset, SF Symbol, or
+        // rendered) via the new `localImage:` initializer instead of a remote URL.
+        ProductCard(
+          title: "Wireless Headphones",
+          description: "Immersive sound with active noise cancellation and 30-hour battery life.",
+          price: "$249.00",
+          localImage: Image(systemName: "headphones"),
+          action: {}
+        )
+
+        // Custom brand: `Brand.make(name:)` clones `.modern` with a custom
+        // display name. Scope it to a subtree via `.environmentObject`, and apply
+        // the per-brand accent at the SwiftUI layer with `.tint(_:)`.
+        BrandedProductCard()
+
         ModernCard(elevation: .high) {
           VStack(spacing: 12) {
             Image(systemName: "sparkles")
@@ -531,6 +546,25 @@ struct CardsDemo: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+/// Demonstrates `Brand.make(name:)`: a `ProductCard` rendered under its own
+/// custom-named brand, scoped with `.environmentObject` and accented via `.tint`.
+struct BrandedProductCard: View {
+  @MainActor
+  private static let acmeDesignSystem = ModernDesignSystem(brand: .make(name: "Acme"))
+
+  var body: some View {
+    ProductCard(
+      title: "Acme Smart Bottle",
+      description: "Brand \"\(Self.acmeDesignSystem.brand.name)\" — cloned from Modern with a custom name.",
+      price: "$39.00",
+      localImage: Image(systemName: "waterbottle.fill"),
+      action: {}
+    )
+    .environmentObject(Self.acmeDesignSystem)
+    .tint(.orange)
   }
 }
 

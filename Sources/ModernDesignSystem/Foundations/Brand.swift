@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 public struct Brand: Hashable {
   public let name: String
@@ -58,6 +59,22 @@ public extension Brand {
     elevation: .modern,
     typography: .modern
   )
+}
+
+public extension Brand {
+  /// A brand cloned from `.modern` with a custom display name.
+  /// The per-brand accent is applied at the SwiftUI layer with `.tint(_:)`.
+  static func make(name: String) -> Brand {
+    Brand(
+      name: name,
+      themes: Brand.modern.themes,
+      systemThemeMapping: Brand.modern.systemThemeMapping,
+      semanticColors: Brand.modern.semanticColors,
+      spacing: Brand.modern.spacing,
+      elevation: Brand.modern.elevation,
+      typography: Brand.modern.typography
+    )
+  }
 }
 
 // MARK: - Default Semantic Colors

@@ -19,10 +19,10 @@ platform :ios do
   desc "Build the ModernDesignSystem Swift package"
   lane :build do
     # Clean build artifacts
-    sh("cd .. && swift package clean")
+    sh("cd .. && xcrun swift package clean")
 
     # Build the package
-    sh("cd .. && swift build")
+    sh("cd .. && xcrun swift build")
 
     UI.success("✅ ModernDesignSystem package built successfully!")
   end
@@ -30,7 +30,7 @@ platform :ios do
   desc "Run all tests for ModernDesignSystem"
   lane :test do
     # Run swift tests
-    sh("cd .. && swift test")
+    sh("cd .. && xcrun swift test")
 
     UI.success("✅ All tests passed!")
   end
