@@ -84,7 +84,7 @@ public struct OceanBreezeColorSet: ColorSet {
   public let labelColor: Color = .init(hex: 0x1A1A1A)
   public let secondaryLabelColor: Color = .init(hex: 0x4A4A4A)
   public let tertiaryLabelColor: Color = .init(hex: 0x7A7A7A)
-  public let quaternaryLabelColor: Color = .init(hex: 0xAAAAA)
+  public let quaternaryLabelColor: Color = .init(hex: 0xAAAAAA)
 }
 
 public struct OceanBreezeDarkColorSet: ColorSet {
@@ -105,7 +105,7 @@ public struct ForestGreenColorSet: ColorSet {
   public let name: ColorSetName = .forestGreen
   public let scheme: ColorScheme = .light
   public let tintColor: Color = .init(hex: 0x228B22)
-  public let primaryBackgroundColor: Color = .init(hex: 0xFAFFFAA)
+  public let primaryBackgroundColor: Color = .init(hex: 0xFAFFFA)
   public let secondaryBackgroundColor: Color = .init(hex: 0xF0FFF0)
   public let labelColor: Color = .init(hex: 0x1A2E1A)
   public let secondaryLabelColor: Color = .init(hex: 0x4A6A4A)
