@@ -236,7 +236,10 @@ struct ComponentsView: View {
 
   var body: some View {
     ScrollView {
-      LazyVStack(spacing: 32) {
+      // Use a non-lazy VStack here: nesting a LazyVGrid (FileTypeIconsDemo / compact
+      // DocumentCards) inside a LazyVStack can wedge scroll-time layout.
+      // ScrollView -> VStack -> LazyVGrid is the canonical, safe structure.
+      VStack(spacing: 32) {
         ButtonsDemo()
         TextFieldsDemo()
         LoaderDemo()
